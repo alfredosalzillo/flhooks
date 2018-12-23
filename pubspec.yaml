@@ -1,8 +1,8 @@
 name: flhooks
-description: Flutter Hooks implementation.
+description: React like Hooks implementation for Flutter.
 version: 0.0.1
-author: Alfredo Salzillo
-homepage:
+author: Alfredo Salzillo <noctisbels@gmail.com>
+homepage: https://github.com/alfredosalzillo/flhooks
 
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
