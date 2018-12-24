@@ -5,10 +5,9 @@
 .pub/
 
 build/
-ios/.generated/
-ios/Flutter/Generated.xcconfig
-ios/Runner/GeneratedPluginRegistrant.*
 
 .idea
 flhooks.iml
 coverage/
+android
+ios
