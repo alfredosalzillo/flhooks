@@ -1,0 +1,19 @@
+language: bash
+os:
+  - osx
+sudo: false
+before_script:
+  - cd ..
+  - git clone https://github.com/flutter/flutter.git -b beta
+  - export PATH=$PATH:$PWD/flutter/bin
+  - export PATH=$PATH:$PWD/flutter/bin/cache/dart-sdk/bin
+  - flutter doctor
+  - cd -
+script:
+  # abort on error
+  - set -e
+  - flutter packages get
+  - flutter test --no-pub --coverage
+cache:
+  directories:
+    - $HOME/.pub-cache

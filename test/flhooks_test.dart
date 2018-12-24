@@ -3,7 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('update Slider value on tap', (WidgetTester tester) async {
+  test('hooks function cannot be called outside HookBuilder', () async {
+    expect(() {
+      final value = useMemo(() => 1, []);
+    }, throwsAssertionError);
+  });
+  testWidgets(
+      'useState change the state and useCallback memoize the function reference',
+      (WidgetTester tester) async {
     // You can use keys to locate the widget you need to test
     var sliderKey = UniqueKey();
 
@@ -43,5 +50,32 @@ void main() {
     expect(slider.value, equals(0.5));
     // Verifies that callback is not updated
     expect(slider.onChanged, equals(onChanged));
+  });
+  testWidgets('useEffect initialize value on the first call',
+      (WidgetTester tester) async {
+    // You can use keys to locate the widget you need to test
+    var sliderKey = UniqueKey();
+    var value = 0.0;
+    // Tells the tester to build a UI based on the widget tree passed to it
+    await tester.pumpWidget(
+      HookBuilder(
+        builder: (BuildContext context) {
+          useEffect(() {
+            value = 1;
+          }, []);
+          return MaterialApp(
+            home: Material(
+              child: Center(
+                child: Slider(
+                  key: sliderKey,
+                  value: value,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+    expect(value, equals(1));
   });
 }

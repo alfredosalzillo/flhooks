@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/alfredosalzillo/flhooks.svg?branch=master)](https://travis-ci.org/alfredosalzillo/flhooks)
+
 # flhooks
 
 React like Hooks implementation for Flutter.
@@ -6,6 +8,12 @@ This package is inspired by
 [React Hooks](https://reactjs.org/docs/hooks-intro.html).
 
 This is a work in progress, fell free to fork or open issues.
+
+## Why Hooks
+
+Like for [React](https://reactjs.org/docs/hooks-intro.html#motivation),
+Hooks try to be a simple method
+to share stateful logic between `Component`.
 
 ## Getting Started
 
@@ -27,15 +35,16 @@ When using Hooks,
 must be followed.
 
 ### Only Call Hooks at the Top Level
-__Don’t call Hooks inside loops, conditions, or nested functions.__
-Hooks can only be used inside a __HookBuilder__ builder params.
+**Don’t call Hooks inside loops, conditions, or nested functions.**
+Hooks can only be used inside a `HookBuilder` builder param.
 They can also be used to create other hooks.
 
-## Example
+## Simple Usage
 
-### Simple Usage
+Hooks can only be used inside the builder of an `HookBuilder`.
 
-Hooks can only be used inside the builder of an HookBuilder.
+`HookBuilder` is like a `StatefulBuilder` how build the `builder` function.
+Hooks function can be used only in the `builder` function.
 
 ```dart
 // Define a Slider Page
@@ -43,10 +52,10 @@ final SliderPage = () =>
     HookBuilder(
       builder: (BuildContext context) {
         // define a state of type double
-        final example = useState(0.0); 
+        final example = useState(0.0);
         final onChanged = useCallback((double newValue) {
           // call example.set for update the value in state
-          example.set(newValue); 
+          example.set(newValue);
         }, [example]);
         return Material(
           child: Center(
@@ -66,67 +75,82 @@ void main() =>
     ));
 ```
 
-### Custom Hooks
-
-Custom Hooks name must start with 'use'.
-
-```dart
-class MultipliedState {
-  const DoublerState(this.value, this.set);
-
-  final value;
-  final set;
-}
-
-
-final useMultiplied = (initial, multiplier) {
-  final state = useState(inital);
-  final set = useCallback((value) => state.set(value * multiplier),
-      [state, multiplier]);
-  return MultipliedState(
-    value: state.value,
-    set: set,
-  );
-};
-```
-
-Now you can use useMultiplied like any other hooks.
-
 ## Hooks
 
 Currently implemented Hooks.
 
 ### useMemo
+`useMemo` return the memoized result of the call to `fn`.
 
-`useMemo` take a function, fn, and the values, store,
-used in the function as input,
-return the value of the call fn(), recall fn() only if store changed.
+`fn` will be recalled only if `store` change.
 
 ```dart
-final helloMessage = useMemo(() => 'Hello ${name}', [name]);
-// the fn passed to useMemo will be recalled only if name change
+ final helloMessage = useMemo(() => 'Hello ${name}', [name]);
 ```
 
 ### useCallback
-`useCallback` take a function, fn, and the values, store,
-used in the function as input,
-return the same reference to fn until the store change.
+`useCallback` return the first reference to `fn`.
+
+`fn` reference will change only if `store` change.
 ```dart
-final onClick = useCallback(() => ..., [input1, input2]);
-// return always the same reference to the first fn passed to useCallback
-// until input1 or input2 change
-// it's like passing an high order function to useMemo
+final onClick = useCallback(() => showAwesomeMessage(input1, input2),
+  [input1, input2]);
 ```
+It's the same as passing `() => fn` to `useMemo`.
 
 ### useState
 
-`useState` take the initial value as input and return an HookState
-with the current value and the set function.
+`useState` return an `HookState`,
+`HookState.value` is `initial` value passed to `useState`,
+or the last passed to `HookState.set`.
+
+Will trigger the rebuild of the `StatefulBuilder`.
 
 ```dart
 final name = useState('');
 // ... get the value
-Text(name.value);
+  Text(name.value);
 //... update the value
-onChange: (newValue) => name.set(newValue);
+  onChange: (newValue) => name.set(newValue);
 ```
+
+### useEffect
+
+`useEffect` exec `fn` at first call or if `store` change.
+If `fn` return a function, this will be called if `store` change
+or when the widget dispose.
+
+```dart
+final helloMessage = useEffect(() {
+  final pub = stream.listen(callback);
+  return () => pub.cancel();
+  }, [stream]);
+```
+ 
+`useEffect` is useful for handle async or stream subscription.
+
+### Custom Hooks
+
+Custom Hooks function can be created composing other hooks function.
+
+Custom Hooks name must start with 'use'.
+
+```dart
+V useAsync<V>(Future<V> Function() asyncFn, V initial, List store) {
+  final state = useState(initial);
+  useEffect(() {
+    var active = true;
+    asyncFn().then((result) {
+      if (active) {
+        state.set(result);
+      }
+    });
+    return () {
+      active = false;
+    };
+  }, store);
+  return state.value;
+}
+```
+
+Now you can use `useAsync` like any other hooks function.
