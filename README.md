@@ -20,7 +20,7 @@ as a dependency in your flutter project.
 
 ```yaml
 dependencies:
- flhooks: "^0.1.0"
+ flhooks: "^1.0.1"
 ```
 
 You should then run `flutter packages upgrade`
