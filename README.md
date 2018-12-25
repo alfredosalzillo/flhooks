@@ -121,7 +121,7 @@ If `fn` return a function, this will be called if `store` change
 or when the widget dispose.
 
 ```dart
-final helloMessage = useEffect(() {
+useEffect(() {
   final pub = stream.listen(callback);
   return () => pub.cancel();
   }, [stream]);
