@@ -1,6 +1,6 @@
 name: flhooks
 description: Stateful function Component in flutter. React like Hooks implementation for Flutter.
-version: 1.0.0
+version: 1.0.1
 author: Alfredo Salzillo <noctisbels@gmail.com>
 homepage: https://github.com/alfredosalzillo/flhooks
 

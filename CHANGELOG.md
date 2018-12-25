@@ -1,3 +1,7 @@
+## [1.0.1] - 26/12/2018
+
+* flutter packages get error fix
+
 ## [1.0.0] - 26/12/2018
 
 * HookBuilder review
