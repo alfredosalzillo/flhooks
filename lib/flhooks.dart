@@ -45,23 +45,25 @@ void Function(StateSetter, List<Hook>, int) _setHooksContext = (
 typedef HookWidgetBuilder = Widget Function(BuildContext);
 
 class _HookBuilderState extends State<HookBuilder> {
-  _HookBuilderState({@required builder, dispose}):
-  _builder = builder,
-  _dispose = dispose;
+  _HookBuilderState();
 
-  final StatefulWidgetBuilder _builder;
-  final Function _dispose;
+  final List<Hook> hooks = [];
 
   @override
   Widget build(BuildContext context) {
-    return this._builder(context, setState);
+    _setHooksContext(setState, hooks, 0);
+    final result = widget.builder(context);
+    _setHooksContext(null, null, null);
+    return result;
   }
 
   @override
   void dispose() {
-    if (_dispose != null) {
-      _dispose();
-    }
+    hooks.forEach((hook) {
+      if (hook.dispose != null) {
+        hook.dispose();
+      }
+    });
     super.dispose();
   }
 }
@@ -100,29 +102,13 @@ class _HookBuilderState extends State<HookBuilder> {
 class HookBuilder extends StatefulWidget {
   HookBuilder({Key key, @required this.builder})
       : assert(builder != null),
-        this.hooks = [],
         super(key: key);
 
   final HookWidgetBuilder builder;
-  final List<Hook> hooks;
 
   @override
   State<StatefulWidget> createState() {
-    return _HookBuilderState(
-      builder: (context, setState) {
-        _setHooksContext(setState, hooks, 0);
-        final result = builder(context);
-        _setHooksContext(null, null, null);
-        return result;
-      },
-      dispose: () {
-        hooks.forEach((hook) {
-          if (hook.dispose != null) {
-            hook.dispose();
-          }
-        });
-      },
-    );
+    return _HookBuilderState();
   }
 }
 

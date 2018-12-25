@@ -1,13 +1,11 @@
 [![Build Status](https://travis-ci.org/alfredosalzillo/flhooks.svg?branch=master)](https://travis-ci.org/alfredosalzillo/flhooks)
 
 # flhooks
-
+Write stateful functional Component in Flutter.
 React like Hooks implementation for Flutter.
 
 This package is inspired by
 [React Hooks](https://reactjs.org/docs/hooks-intro.html).
-
-This is a work in progress, fell free to fork or open issues.
 
 ## Why Hooks
 
@@ -22,7 +20,7 @@ as a dependency in your flutter project.
 
 ```yaml
 dependencies:
- flhooks: "^0.0.1"
+ flhooks: "^0.1.0"
 ```
 
 You should then run `flutter packages upgrade`
@@ -154,3 +152,7 @@ V useAsync<V>(Future<V> Function() asyncFn, V initial, List store) {
 ```
 
 Now you can use `useAsync` like any other hooks function.
+
+## Example
+
+More example in the [example](example) directory.
