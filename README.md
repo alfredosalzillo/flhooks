@@ -13,6 +13,9 @@ Like for [React](https://reactjs.org/docs/hooks-intro.html#motivation),
 Hooks try to be a simple method
 to share stateful logic between `Component`.
 
+The goal of thi library is to devoid class extensions and mixin.
+Of course flutter is not designed for functional Component and Hooks.
+
 ## Getting Started
 
 You should ensure that you add the flhooks
@@ -20,7 +23,7 @@ as a dependency in your flutter project.
 
 ```yaml
 dependencies:
- flhooks: "^1.0.1"
+ flhooks: "^1.1.0"
 ```
 
 You should then run `flutter packages upgrade`
@@ -98,18 +101,19 @@ It's the same as passing `() => fn` to `useMemo`.
 
 ### useState
 
-`useState` return an `HookState`,
-`HookState.value` is `initial` value passed to `useState`,
-or the last passed to `HookState.set`.
+`useState` return a `StateController`,
+`HookState.value` is the `initial` value passed to `useState`,
+or the last set using `state.value = newValue`.
 
-Will trigger the rebuild of the `StatefulBuilder`.
+`state.value = newValue` will trigger
+the rebuild of the `StatefulBuilder`.
 
 ```dart
 final name = useState('');
 // ... get the value
   Text(name.value);
-//... update the value
-  onChange: (newValue) => name.set(newValue);
+//... update the value and rebuild the component
+  onChange: (newValue) => name.value = newValue;
 ```
 
 ### useEffect
@@ -140,7 +144,7 @@ V useAsync<V>(Future<V> Function() asyncFn, V initial, List store) {
     var active = true;
     asyncFn().then((result) {
       if (active) {
-        state.set(result);
+        state.value = result;
       }
     });
     return () {
@@ -153,6 +157,38 @@ V useAsync<V>(Future<V> Function() asyncFn, V initial, List store) {
 
 Now you can use `useAsync` like any other hooks function.
 
+## Hot Reload
+
+Hot reload is basically supported.
+
+When the hock type change, because an hook function is added,
+removed, or change type, 
+the hook will be disposed and reset to null.
+
+However after an add or a remove, all hooks after the one how change,
+can be disposed or had a reset.
+
+__Pay attention, will be no break hot reloading the app,
+but will be other side effects.__
+
+We decide to not make hooks shift to the next position,
+because we prefer to have the same behavior in the case you add,
+remove, or change an hook function call.
+
+Feel free to open a issue or fork the repository
+to suggest a new implementation.
+
 ## Example
 
 More example in the [example](example) directory.
+
+## Changelog
+Current version is __1.1.0__,
+read the [changelog](CHANGELOG.md) for more info.
+
+## Next on flhooks
+
+New hooks will be added in future like `useFuture` (or `useAsync`) and `useStream`,
+there will be no need to use `FutureBuilder` and `StreamBuilder` anymore.
+
+We are actually testing some `useIf` conditional implementation of hooks.

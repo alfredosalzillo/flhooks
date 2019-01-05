@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('hooks function cannot be called outside HookBuilder', () async {
     expect(() {
-      final value = useMemo(() => 1, []);
+      useEffect(() => null, []);
     }, throwsAssertionError);
   });
   testWidgets(
@@ -20,7 +20,7 @@ void main() {
         builder: (BuildContext context) {
           final test = useState(0.0);
           final onChanged = useCallback((double newValue) {
-            test.set(newValue);
+            test.value = newValue;
           }, [test]);
           return MaterialApp(
             home: Material(
@@ -69,6 +69,7 @@ void main() {
                 child: Slider(
                   key: sliderKey,
                   value: value,
+                  onChanged: (newValue) => null,
                 ),
               ),
             ),
@@ -78,4 +79,52 @@ void main() {
     );
     expect(value, equals(1));
   });
+  testWidgets('hot reload doesn\'t break',
+          (WidgetTester tester) async {
+        // You can use keys to locate the widget you need to test
+        var sliderKey = UniqueKey();
+        var value = 0.0;
+        // Tells the tester to build a UI based on the widget tree passed to it
+        await tester.pumpWidget(
+          HookBuilder(
+            builder: (BuildContext context) {
+              useEffect(() {
+                value = 1;
+              }, []);
+              return MaterialApp(
+                home: Material(
+                  child: Center(
+                    child: Slider(
+                      key: sliderKey,
+                      value: value,
+                      onChanged: (newValue) => null,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+        await tester.pumpWidget(
+          HookBuilder(
+            builder: (BuildContext context) {
+              final test = useState(1.0);
+              useEffect(() {
+                value = 1;
+              }, []);
+              return MaterialApp(
+                home: Material(
+                  child: Center(
+                    child: Slider(
+                      key: sliderKey,
+                      value: value,
+                      onChanged: (newValue) => test.value = newValue,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      });
 }
