@@ -40,7 +40,7 @@ responsibility.
     remove, or change an hook function call.
 
 * Added Hot Reload test  
-* Added Hot Reload and Changelog section ro [README](README.md)
+* Added Hot Reload and Changelog section to [README](README.md)
 
 We are also thinking to make `use` private.
 Everything can be done using `useMemo` now.
