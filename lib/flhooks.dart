@@ -195,7 +195,7 @@ V use<V, S>(HookTransformer<V, S> transformer) {
   assert(_currentHookContext.hooks != null,
       'the current hooks of the hook context cannot be null');
   assert(_currentHookContext.setState != null,
-      'the current setState of the hook contect cannot be null');
+      'the current setState of the hook context cannot be null');
   final _currentHooks = _currentHookContext.hooks;
   final _currentIndex = _currentHookContext.index;
   if (_currentHooks.length <= _currentIndex) {
