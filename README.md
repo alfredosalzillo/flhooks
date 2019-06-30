@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/alfredosalzillo/flhooks.svg?branch=master)](https://travis-ci.org/alfredosalzillo/flhooks)
-[![Code Coverage](https://codecov.io/gh/alfredosalzillo/flhooks/branch/master/graph/badge.svg)](https://codecov.io/gh/alfredosalzillo/flhooks/)
+[![codecov](https://codecov.io/gh/alfredosalzillo/flhooks/branch/master/graph/badge.svg)](https://codecov.io/gh/alfredosalzillo/flhooks)
 
 # flhooks
 Write stateful functional Component in Flutter.
