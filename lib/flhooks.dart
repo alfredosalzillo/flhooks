@@ -123,7 +123,7 @@ abstract class HookWidget extends StatefulWidget {
   Widget builder(BuildContext context);
 
   @override
-  State<HookWidget> createState() {
+  _HookBuilderState createState() {
     return _HookBuilderState();
   }
 }
