@@ -58,7 +58,7 @@ _HookContext _currentHookContext;
 /// Define the type of a builder function how can use Hooks.
 typedef HookWidgetBuilder = Widget Function(BuildContext);
 
-class _HookBuilderState extends State<HookBuilder> {
+class _HookBuilderState<T extends HookWidget> extends State<T> {
   _HookBuilderState() {
     _hooks = [];
   }
@@ -80,50 +80,6 @@ class _HookBuilderState extends State<HookBuilder> {
   void dispose() {
     _hooks.forEach(_dispose);
     super.dispose();
-  }
-}
-
-/// [HookBuilder] is like a [StatefulBuilder] how build the [builder] function.
-/// Hooks function can be used only in the [builder] function.
-///
-/// ```dart
-/// // Define a Slider Page
-/// final SliderPage = () =>
-///    HookBuilder(
-///      builder: (BuildContext context) {
-///        // define a state of type double
-///        final example = useState(0.0);
-///        final onChanged = useCallback((double newValue) {
-///          // set example.value for update the value in state
-///          example.value = newValue;
-///        }, [example]);
-///        return Material(
-///          child: Center(
-///            child: Slider(
-///              key: sliderKey,
-///              value: example.value,
-///              onChanged: onChanged,
-///            ),
-///          ),
-///        );
-///      },
-///    );
-/// // Start the app
-/// void main() =>
-///     runApp(MaterialApp(
-///       home: SliderPage(),
-///     ));
-/// ```
-class HookBuilder extends StatefulWidget {
-  HookBuilder({Key key, @required this.builder})
-      : assert(builder != null),
-        super(key: key);
-
-  final HookWidgetBuilder builder;
-
-  @override
-  State<StatefulWidget> createState() {
-    return _HookBuilderState();
   }
 }
 
@@ -167,8 +123,53 @@ abstract class HookWidget extends StatefulWidget {
   Widget builder(BuildContext context);
 
   @override
-  State<StatefulWidget> createState() {
+  State<HookWidget> createState() {
     return _HookBuilderState();
+  }
+}
+
+/// [HookBuilder] is like a [StatefulBuilder] how build the [builder] function.
+/// Hooks function can be used only in the [builder] function.
+///
+/// ```dart
+/// // Define a Slider Page
+/// final SliderPage = () =>
+///    HookBuilder(
+///      builder: (BuildContext context) {
+///        // define a state of type double
+///        final example = useState(0.0);
+///        final onChanged = useCallback((double newValue) {
+///          // set example.value for update the value in state
+///          example.value = newValue;
+///        }, [example]);
+///        return Material(
+///          child: Center(
+///            child: Slider(
+///              key: sliderKey,
+///              value: example.value,
+///              onChanged: onChanged,
+///            ),
+///          ),
+///        );
+///      },
+///    );
+/// // Start the app
+/// void main() =>
+///     runApp(MaterialApp(
+///       home: SliderPage(),
+///     ));
+/// ```
+class HookBuilder extends HookWidget {
+  HookBuilder({Key key, @required HookWidgetBuilder builder})
+      : assert(builder != null),
+        this._builder = builder,
+        super(key: key);
+
+  final HookWidgetBuilder _builder;
+
+  @override
+  Widget builder(BuildContext context) {
+    return this._builder(context);
   }
 }
 
