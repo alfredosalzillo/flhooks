@@ -2,6 +2,13 @@ import 'package:flhooks/flhooks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+class _TestHookWidget extends HookWidget {
+  @override
+  Widget builder(BuildContext context) {
+    return Container();
+  }
+}
+
 void main() {
   test('hooks function cannot be called outside HookBuilder', () async {
     expect(() {
@@ -127,4 +134,7 @@ void main() {
           ),
         );
       });
+  testWidgets('HookWidget build withour error', (tester) async {
+    tester.pumpWidget(_TestHookWidget());
+  });
 }
