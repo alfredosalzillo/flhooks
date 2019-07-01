@@ -162,6 +162,8 @@ class HookBuilder extends StatefulWidget {
 /// ```
 
 abstract class HookWidget extends StatefulWidget {
+  HookWidget({ Key key }): super(key: key);
+
   Widget builder(BuildContext context);
 
   @override
