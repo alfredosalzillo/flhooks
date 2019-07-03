@@ -46,10 +46,12 @@ class _HookContext {
   _HookContext({
     this.setState,
     this.hooks,
+    this.context,
   });
 
   final StateSetter setState;
   final List<Hook> hooks;
+  final BuildContext context;
   int index = 0;
 }
 
@@ -70,6 +72,7 @@ class _HookBuilderState<T extends HookWidget> extends State<T> {
     _currentHookContext = _HookContext(
       hooks: _hooks,
       setState: setState,
+      context: context,
     );
     final result = widget.builder(context);
     _currentHookContext = null;
@@ -223,6 +226,23 @@ V use<V, S>(HookTransformer<V, S> transformer) {
 
 bool _storeEquals(List one, List two) =>
     one == two || one.every((o) => two.any((t) => t == o));
+
+/// Return the actual [BuildContext]
+///
+/// useful for use the BuildContext inside other hooks
+///
+/// ```dart
+/// useNavigator() {
+///   final context = useContext();
+///   return Navigator.of(context);
+/// }
+/// ```
+BuildContext useContext() {
+  return use((current) => Hook(
+      controller:_currentHookContext.context,
+      store: [],
+  ));
+}
 
 /// Return the memoized value of [fn].
 ///

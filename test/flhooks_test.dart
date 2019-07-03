@@ -15,6 +15,34 @@ void main() {
       useEffect(() => null, []);
     }, throwsAssertionError);
   });
+  testWidgets('useContext return the actual BuildContext',
+          (WidgetTester tester) async {
+        // You can use keys to locate the widget you need to test
+        var sliderKey = UniqueKey();
+        BuildContext _context = null;
+        BuildContext _contextFromHook = null;
+        // Tells the tester to build a UI based on the widget tree passed to it
+        await tester.pumpWidget(
+          HookBuilder(
+            builder: (BuildContext context) {
+              _context = context;
+              _contextFromHook = useContext();
+              return MaterialApp(
+                home: Material(
+                  child: Center(
+                    child: Slider(
+                      key: sliderKey,
+                      value: 0,
+                      onChanged: (newValue) => null,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+        expect(_context, _contextFromHook);
+      });
   testWidgets(
       'useState change the state and useCallback memoize the function reference',
       (WidgetTester tester) async {
