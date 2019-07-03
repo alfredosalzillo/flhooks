@@ -2,7 +2,7 @@ name: flhooks
 description: Stateful functional Component in flutter and
   React like Hooks implementation for Flutter.
   Simple to use like calling a function.
-version: 1.2.0
+version: 1.3.0
 author: Alfredo Salzillo <noctisbels@gmail.com>
 homepage: https://github.com/alfredosalzillo/flhooks
 

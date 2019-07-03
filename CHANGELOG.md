@@ -1,3 +1,13 @@
+## [1.3.0] - 03/07/2019
+
+* added `useContext`
+    
+    Added the `useContext` hook to use the `BuildContext` inside other hooks
+    
+* added `HookWidget`
+    
+    Added the `HookWidget` class to use class Widget with hooks.
+  HookWidget is now use as the base for the HookBuilder class.
 ## [1.1.0] - 05/01/2019
 
 There is a lot of change in this version.
