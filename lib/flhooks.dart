@@ -46,10 +46,12 @@ class _HookContext {
   _HookContext({
     this.setState,
     this.hooks,
+    this.context,
   });
 
   final StateSetter setState;
   final List<Hook> hooks;
+  final BuildContext context;
   int index = 0;
 }
 
@@ -58,7 +60,7 @@ _HookContext _currentHookContext;
 /// Define the type of a builder function how can use Hooks.
 typedef HookWidgetBuilder = Widget Function(BuildContext);
 
-class _HookBuilderState extends State<HookBuilder> {
+class _HookBuilderState<T extends HookWidget> extends State<T> {
   _HookBuilderState() {
     _hooks = [];
   }
@@ -70,6 +72,7 @@ class _HookBuilderState extends State<HookBuilder> {
     _currentHookContext = _HookContext(
       hooks: _hooks,
       setState: setState,
+      context: context,
     );
     final result = widget.builder(context);
     _currentHookContext = null;
@@ -80,6 +83,51 @@ class _HookBuilderState extends State<HookBuilder> {
   void dispose() {
     _hooks.forEach(_dispose);
     super.dispose();
+  }
+}
+
+/// [HookWidget] is like a [StatefulWidget] how build
+/// the [builder] method.
+///
+/// Inside the [builder] method hooks can be used.
+///
+/// ```dart
+/// // Define a Slider Page
+/// class SliderPage extends HookWidget {
+///    @override
+///    Widget builder(BuildContext context) {
+///      // define a state of type double
+///      final example = useState(0.0);
+///      final onChanged = useCallback((double newValue) {
+///      // set example.value for update the value in state
+///      example.value = newValue;
+///      }, [example]);
+///      return Material(
+///        child: Center(
+///          child: Slider(
+///            key: sliderKey,
+///            value: example.value,
+///            onChanged: onChanged,
+///          ),
+///        ),
+///      );
+///    }
+/// }
+/// // Start the app
+/// void main() =>
+///     runApp(MaterialApp(
+///       home: SliderPage(),
+///     ));
+/// ```
+
+abstract class HookWidget extends StatefulWidget {
+  HookWidget({ Key key }): super(key: key);
+
+  Widget builder(BuildContext context);
+
+  @override
+  _HookBuilderState createState() {
+    return _HookBuilderState();
   }
 }
 
@@ -114,16 +162,17 @@ class _HookBuilderState extends State<HookBuilder> {
 ///       home: SliderPage(),
 ///     ));
 /// ```
-class HookBuilder extends StatefulWidget {
-  HookBuilder({Key key, @required this.builder})
+class HookBuilder extends HookWidget {
+  HookBuilder({Key key, @required HookWidgetBuilder builder})
       : assert(builder != null),
+        this._builder = builder,
         super(key: key);
 
-  final HookWidgetBuilder builder;
+  final HookWidgetBuilder _builder;
 
   @override
-  State<StatefulWidget> createState() {
-    return _HookBuilderState();
+  Widget builder(BuildContext context) {
+    return this._builder(context);
   }
 }
 
@@ -152,7 +201,7 @@ V use<V, S>(HookTransformer<V, S> transformer) {
   assert(_currentHookContext.hooks != null,
       'the current hooks of the hook context cannot be null');
   assert(_currentHookContext.setState != null,
-      'the current setState of the hook contect cannot be null');
+      'the current setState of the hook context cannot be null');
   final _currentHooks = _currentHookContext.hooks;
   final _currentIndex = _currentHookContext.index;
   if (_currentHooks.length <= _currentIndex) {
@@ -177,6 +226,23 @@ V use<V, S>(HookTransformer<V, S> transformer) {
 
 bool _storeEquals(List one, List two) =>
     one == two || one.every((o) => two.any((t) => t == o));
+
+/// Return the actual [BuildContext]
+///
+/// useful for use the BuildContext inside other hooks
+///
+/// ```dart
+/// useNavigator() {
+///   final context = useContext();
+///   return Navigator.of(context);
+/// }
+/// ```
+BuildContext useContext() {
+  return use((current) => Hook(
+      controller:_currentHookContext.context,
+      store: [],
+  ));
+}
 
 /// Return the memoized value of [fn].
 ///

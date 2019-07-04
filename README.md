@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/alfredosalzillo/flhooks.svg?branch=master)](https://travis-ci.org/alfredosalzillo/flhooks)
+[![codecov](https://codecov.io/gh/alfredosalzillo/flhooks/branch/master/graph/badge.svg)](https://codecov.io/gh/alfredosalzillo/flhooks)
 
 # flhooks
 Write stateful functional Component in Flutter.
@@ -55,8 +56,8 @@ final SliderPage = () =>
         // define a state of type double
         final example = useState(0.0);
         final onChanged = useCallback((double newValue) {
-          // call example.set for update the value in state
-          example.set(newValue);
+          // change example.value for update the value in state
+          example.value = newValue;
         }, [example]);
         return Material(
           child: Center(
@@ -168,7 +169,7 @@ the hook will be disposed and reset to null.
 However after an add or a remove, all hooks after the one how change,
 can be disposed or had a reset.
 
-__Pay attention, will be no break hot reloading the app,
+__Pay attention, will be no break after hot reloading the app,
 but will be other side effects.__
 
 We decide to not make hooks shift to the next position,

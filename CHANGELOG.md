@@ -1,3 +1,13 @@
+## [1.3.0] - 03/07/2019
+
+* added `useContext`
+    
+    Added the `useContext` hook to use the `BuildContext` inside other hooks
+    
+* added `HookWidget`
+    
+    Added the `HookWidget` class to use class Widget with hooks.
+  HookWidget is now use as the base for the HookBuilder class.
 ## [1.1.0] - 05/01/2019
 
 There is a lot of change in this version.
@@ -40,7 +50,7 @@ responsibility.
     remove, or change an hook function call.
 
 * Added Hot Reload test  
-* Added Hot Reload and Changelog section ro [README](README.md)
+* Added Hot Reload and Changelog section to [README](README.md)
 
 We are also thinking to make `use` private.
 Everything can be done using `useMemo` now.
